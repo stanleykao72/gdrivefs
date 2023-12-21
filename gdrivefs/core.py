@@ -160,15 +160,14 @@ class GoogleDriveFileSystem(AbstractFileSystem):
     def cp_file(self, path1, path2):
         _logger.info(f'path1:{path1}')
         _logger.info(f'path2:{path2}')
-        # path1_id = self.path_to_file_id(path1)
-        # path2_id = self.path_to_file_id(path2)
-        self.service.copy(
-            fileId=path1, 
-            body={
-                'name': 'copiedFile',
-                'parents': [path2],
-            },
-            supportsAllDrives=True).execute()
+        if path1 != path2:
+            self.service.copy(
+                fileId=path1, 
+                body={
+                    'name': 'copiedFile',
+                    'parents': [path2],
+                },
+                supportsAllDrives=True).execute()
 
     def _info_by_id(self, file_id, path_prefix=None):
         response = self.service.get(fileId=file_id, fields=fields,
