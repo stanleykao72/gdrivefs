@@ -163,10 +163,10 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         # path1_id = self.path_to_file_id(path1)
         # path2_id = self.path_to_file_id(path2)
         self.service.copy(
-            fileId=path1_id, 
+            fileId=path1, 
             body={
                 'name': 'copiedFile',
-                'parents': [path2_id],
+                'parents': [path2],
             },
             supportsAllDrives=True).execute()
 
