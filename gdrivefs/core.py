@@ -8,6 +8,9 @@ from googleapiclient.errors import HttpError
 from google.auth.credentials import AnonymousCredentials
 from google.oauth2 import service_account
 import pydata_google_auth
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 scope_dict = {'full_control': 'https://www.googleapis.com/auth/drive',
@@ -155,8 +158,10 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         self.rm(path, recursive=False)
 
     def cp_file(self, path1, path2):
-        path1_id = self.path_to_file_id(path1)
-        path2_id = self.path_to_file_id(path2)
+        _logger.info(f'path1:{path1}')
+        _logger.info(f'path2:{path2}')
+        # path1_id = self.path_to_file_id(path1)
+        # path2_id = self.path_to_file_id(path2)
         self.service.copy(
             fileId=path1_id, 
             body={
