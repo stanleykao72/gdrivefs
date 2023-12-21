@@ -88,7 +88,7 @@ class GoogleDriveFileSystem(AbstractFileSystem):
             cred = self._connect_cache()
         elif method == 'anon':
             cred = AnonymousCredentials()
-        elif method is "service_account":
+        elif method == "service_account":
             cred = self._connect_service_account()
         else:
             raise ValueError(f"Invalid connection method `{method}`.")
@@ -153,6 +153,17 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         if not self.isdir(path):
             raise ValueError("Path is not a directory")
         self.rm(path, recursive=False)
+
+    def cp_file(self, path1, path2):
+        path1_id = self.path_to_file_id(path1)
+        path2_id = self.path_to_file_id(path2)
+        self.service.copy(
+            fileId=path1_id, 
+            body={
+                'name': 'copiedFile',
+                'parents': [path2_id],
+            },
+            supportsAllDrives=True).execute()
 
     def _info_by_id(self, file_id, path_prefix=None):
         response = self.service.get(fileId=file_id, fields=fields,
