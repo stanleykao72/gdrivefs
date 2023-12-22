@@ -157,15 +157,6 @@ class GoogleDriveFileSystem(AbstractFileSystem):
             raise ValueError("Path is not a directory")
         self.rm(path, recursive=False)
 
-    def move(self, path1, path2):
-        path1_id = self.path_to_file_id(path1)
-        path2_id = self.path_to_file_id(path2)
-        file = self.service.files().get(fileId=path1_id, fields='parents').execute()
-        previous_parents = ",".join(file.get('parents'))
-        return self.service.files().update(fileId=path1_id, addParents=path2_id,
-                                           removeParents=previous_parents,
-                                           fields='id, parents').execute()
-
     def rename(self, path1, path2):
         path1_id = self.path_to_file_id(path1)
         body = {'name': path2}
