@@ -249,6 +249,7 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         for child in all_children:
             if child['name'] == child_name:
                 possible_children.append(child['id'])
+        _logger.info(f'possible_children:{possible_children}')
         if len(possible_children) == 0:
             raise FileNotFoundError(
                 f'Directory {directory_file_id} has no child '
