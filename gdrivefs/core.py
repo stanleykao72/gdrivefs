@@ -158,18 +158,12 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         self.rm(path, recursive=False)
 
     def cp_file(self, path1, path2):
-        _logger.info(f'path1:{path1}')
-        _logger.info(f'path2:{path2}')
         parent_path = self._parent(path1)
-        _logger.info(f'parent_path:"{parent_path}".......')
         if parent_path:
             parent_path_id = self.path_to_file_id(parent_path)
         else:
             parent_path_id = self.root_file_id
         path1_id = self.path_to_file_id(path1, parent=parent_path_id)
-        # path2_id = self.path_to_file_id(path2)
-        _logger.info(f'path1_id:{path1_id}')
-        # _logger.info(f'path2:{path2}')
         self.service.copy(
             fileId=path1_id, 
             body={
@@ -177,6 +171,11 @@ class GoogleDriveFileSystem(AbstractFileSystem):
                 'parents': [parent_path_id],
             },
             supportsAllDrives=True).execute()
+
+    def rename(self, path1, path2):
+        path1_id = self.path_to_file_id(path1)
+        body = {'name': path2}
+        return self.service.files().update(fileId=path1_id, body=body).execute()
 
     def _info_by_id(self, file_id, path_prefix=None):
         response = self.service.get(fileId=file_id, fields=fields,
@@ -192,13 +191,10 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         return self.service.export(fileId=file_id, mimeType=mime_type).execute()
 
     def ls(self, path, detail=False, trashed=False):
-        _logger.info(f'ls path:{path}')
         path = self._strip_protocol(path)
-        _logger.info(f'ls path:{path}')
         if path in [None, '/']:
             path = ""
         files = self._ls_from_cache(path)
-        _logger.info(f'ls files:{files}')
         if not files:
             if path == "":
                 file_id = self.root_file_id
@@ -237,14 +233,11 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         return all_files
 
     def path_to_file_id(self, path, parent=None, trashed=False):
-        _logger.info(f'path_to_file_id path:{path}')
         items = path.strip('/').split('/')
-        _logger.info(f'path_to_file_id items:{items}')
         if path in ["", "/", "root", self.root_file_id]:
             return self.root_file_id
         if parent is None:
             parent = self.root_file_id
-        _logger.info(f'path_to_file_id parent:{parent}')
         top_file_id = self._get_directory_child_by_name(items[0], parent,
                                                         trashed=trashed)
         if len(items) == 1:
