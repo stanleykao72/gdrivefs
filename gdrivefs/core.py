@@ -189,10 +189,13 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         return self.service.export(fileId=file_id, mimeType=mime_type).execute()
 
     def ls(self, path, detail=False, trashed=False):
+        _logger.info(f'ls path:{path}')
         path = self._strip_protocol(path)
+        _logger.info(f'ls path:{path}')
         if path in [None, '/']:
             path = ""
         files = self._ls_from_cache(path)
+        _logger.info(f'ls files:{files}')
         if not files:
             if path == "":
                 file_id = self.root_file_id
