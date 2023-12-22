@@ -157,20 +157,14 @@ class GoogleDriveFileSystem(AbstractFileSystem):
             raise ValueError("Path is not a directory")
         self.rm(path, recursive=False)
 
-    def cp_file(self, path1, path2):
-        parent_path = self._parent(path1)
-        if parent_path:
-            parent_path_id = self.path_to_file_id(parent_path)
-        else:
-            parent_path_id = self.root_file_id
-        path1_id = self.path_to_file_id(path1, parent=parent_path_id)
-        self.service.copy(
-            fileId=path1_id, 
-            body={
-                'name': path2,
-                'parents': [parent_path_id],
-            },
-            supportsAllDrives=True).execute()
+    def move(self, path1, path2):
+        path1_id = self.path_to_file_id(path1)
+        path2_id = self.path_to_file_id(path2)
+        file = self.service.files().get(fileId=path1_id, fields='parents').execute()
+        previous_parents = ",".join(file.get('parents'))
+        return self.service.files().update(fileId=path1_id, addParents=path2_id,
+                                           removeParents=previous_parents,
+                                           fields='id, parents').execute()
 
     def rename(self, path1, path2):
         path1_id = self.path_to_file_id(path1)
