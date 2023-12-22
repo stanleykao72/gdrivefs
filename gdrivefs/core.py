@@ -218,7 +218,9 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         return all_files
 
     def path_to_file_id(self, path, parent=None, trashed=False):
+        _logger.info(f'path_to_file_id path:{path}')
         items = path.strip('/').split('/')
+        _logger.info(f'path_to_file_id items:{items}')
         if path in ["", "/", "root", self.root_file_id]:
             return self.root_file_id
         if parent is None:
