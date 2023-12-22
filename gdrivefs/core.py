@@ -161,7 +161,7 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         _logger.info(f'path1:{path1}')
         _logger.info(f'path2:{path2}')
         parent_path = self._parent(path1)
-        _logger.info(f'parent_path:"{parent_path}"')
+        _logger.info(f'parent_path:"{parent_path}".......')
         if parent_path:
             parent_path_id = self.path_to_file_id(parent_path)
         else:
