@@ -163,7 +163,7 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         _logger.info(f'path1:{path1}')
         _logger.info(f'path1_id:{path1_id}')
         body = {'name': path2}
-        return self.service.files().update(fileId=path1_id, body=body).execute()
+        return self.service.update(fileId=path1_id, body=body).execute()
 
     def _info_by_id(self, file_id, path_prefix=None):
         response = self.service.get(fileId=file_id, fields=fields,
