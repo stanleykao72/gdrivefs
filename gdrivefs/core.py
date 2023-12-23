@@ -158,7 +158,10 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         self.rm(path, recursive=False)
 
     def rename(self, path1, path2):
+        _logger.info(f'self.service:{self.service}')
         path1_id = self.path_to_file_id(path1)
+        _logger.info(f'path1:{path1}')
+        _logger.info(f'path1_id:{path1_id}')
         body = {'name': path2}
         return self.service.files().update(fileId=path1_id, body=body).execute()
 
