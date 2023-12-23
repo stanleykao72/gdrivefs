@@ -157,13 +157,16 @@ class GoogleDriveFileSystem(AbstractFileSystem):
             raise ValueError("Path is not a directory")
         self.rm(path, recursive=False)
 
+    async def file_update(self, file_id, body):
+        return await self.service.update(fileId=file_id, body=body).execute()
+
     def rename(self, path1, path2):
         _logger.info(f'self.service:{self.service}')
         path1_id = self.path_to_file_id(path1)
         _logger.info(f'path1:{path1}')
         _logger.info(f'path1_id:{path1_id}')
         body = {'name': path2}
-        return self.service.update(fileId=path1_id, body=body).execute()
+        return self.file_update(path1_id, body)
 
     def _info_by_id(self, file_id, path_prefix=None):
         response = self.service.get(fileId=file_id, fields=fields,
