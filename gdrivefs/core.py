@@ -208,7 +208,7 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         else:
             return sorted([f["name"] for f in files])
 
-    def _list_directory_by_id(self, file_id, trashed=False, path_prefix=None):
+    async def _list_directory_by_id(self, file_id, trashed=False, path_prefix=None):
         all_files = []
         page_token = None
         afields = 'nextPageToken, files(%s)' % fields
@@ -216,7 +216,7 @@ class GoogleDriveFileSystem(AbstractFileSystem):
         if not trashed:
             query += "and trashed = false "
         while True:
-            response = self.service.list(q=query,
+            response = await self.service.list(q=query,
                                          spaces=self.spaces, fields=afields,
                                          pageToken=page_token).execute()
             for f in response.get('files', []):
